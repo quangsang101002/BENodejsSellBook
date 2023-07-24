@@ -1,58 +1,79 @@
-import express, { request, response } from 'express';
+// Import the required modules and create the express app
+import express from 'express';
 const app = express();
 
-//ví dụ trả về HTML
-app.get('/', (request, response) => {
-  //code thuần
-  //   response.writeHead(200, { 'Content-type': 'text/html; charset=utf-8' });
-  //   response.write('<h1>Đây là trang chủ</h1>');
-  //   response.end();
+app.use(express.urlencoded({ extended: true }));
+let users = [
+  {
+    id: 1,
+    name: 'quang sang',
+    email: 'quang@gmail.com',
+  },
+];
 
-  //trả về với hàm send của exprss
-  response.send('<h1>Đây là trang chủ</h1>');
+app.get('/users', (req, res) => {
+  res.send(...users);
 });
-
-//ví dụ trả về json
-app.get('/user/:id', (req, res) => {
-  const users = [
-    {
-      id: 1,
-      name: 'Thái',
-    },
-    {
-      id: 2,
-      name: 'Sáng',
-    },
-  ];
-  const id = req.params.id;
-
-  const user = users.find((u) => u.id == id);
-
-  if (user) {
-    res.send(user);
+// Get user by ID
+app.get('/users/:id', (req, res) => {
+  const { id } = req.params;
+  const member = users.filter((user) => user.id == id);
+  if (member.length > 0) {
+    res.send(member);
   } else {
-    res.send({ error: 'người dùng không tồn tại' });
+    res.send({
+      error: 'không tồn tại người dùng',
+    });
   }
 });
-app.get('/about/*', (req, res) => {
-  res.send('Đây là trang aboaut');
+
+// Display a form to add a new user
+app.get('/', (req, res) => {
+  res.send(`
+    <form action="http://localhost:8080/users" method="POST">
+      <input name="name" placeholder="Name"/>
+      <input name="email" placeholder="Email"/>
+      <input name="id" placeholder="id"/>
+      <button type="submit">Add</button>
+    </form>
+  `);
 });
 
-// lấy ví dụ về query string
-app.get('/products', (req, res) => {
-  const products = [
-    { id: 1, name: 'laptop' },
-    { id: 2, name: 'tivi' },
-  ];
-  const { keyword, id } = req.query;
+// Display a form to update user by ID
+app.get('/update/:id', (req, res) => {
+  const { id } = req.params;
+  res.send(`
+    <form action="http://localhost:8080/update/${id}" method="POST">
+      <input type="hidden" name="_method">
+      <input name="name" placeholder="Name"/>
+      <input name="email" placeholder="Email"/>
+      <button type="submit">Update</button>
+    </form>
+  `);
+});
 
-  const result = products.filter((product) => {
-    return (
-      (keyword && product.name.toLowerCase().includes(keyword.toLowerCase())) ||
-      product.id == id
-    );
+// Add a new user
+app.post('/users', (req, res) => {
+  const { id, name, email } = req.body;
+  const newUser = { id: parseInt(id), name: name, email: email };
+  users.push(newUser);
+  res.send(users);
+});
+
+// Update user by ID
+app.post('/update/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, email } = req.body;
+
+  const updated = users.map((user) => {
+    if (user.id == id) {
+      user.name = name;
+      user.email = email;
+    }
+    return user;
   });
-  res.send(result);
+
+  res.send(updated);
 });
 
 app.listen(8080, () => {
