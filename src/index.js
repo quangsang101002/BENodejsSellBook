@@ -1,60 +1,41 @@
-import express, { request, response } from 'express';
+import express from 'express';
+import bodyParser from 'body-parser';
+import morgan from 'morgan';
+import fs from 'fs';
 const app = express();
 
-//ví dụ trả về HTML
-app.get('/', (request, response) => {
-  //code thuần
-  //   response.writeHead(200, { 'Content-type': 'text/html; charset=utf-8' });
-  //   response.write('<h1>Đây là trang chủ</h1>');
-  //   response.end();
+// app.use(express.json());
+// app.use(express.urlencoded());
 
-  //trả về với hàm send của exprss
-  response.send('<h1>Đây là trang chủ</h1>');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(morgan('combined'));
+
+const accessLogStream = fs.createWriteStream('src/logs/access.log', {
+  flags: 'a',
 });
+app.use(morgan('combined', { stream: accessLogStream }));
+app.get(
+  '/user',
+  (req, res, next) => {
+    if (req.query.email !== undefined) {
+      next();
+    } else {
+      res.send({
+        error: 'Invalid request',
+      });
+    }
+  },
+  (req, res) => {
+    res.send({ users: [] });
+  },
+);
 
-//ví dụ trả về json
-app.get('/user/:id', (req, res) => {
-  const users = [
-    {
-      id: 1,
-      name: 'Thái',
-    },
-    {
-      id: 2,
-      name: 'Sáng',
-    },
-  ];
-  const id = req.params.id;
-
-  const user = users.find((u) => u.id == id);
-
-  if (user) {
-    res.send(user);
-  } else {
-    res.send({ error: 'người dùng không tồn tại' });
-  }
-});
-app.get('/about/*', (req, res) => {
-  res.send('Đây là trang aboaut');
-});
-
-// lấy ví dụ về query string
-app.get('/products', (req, res) => {
-  const products = [
-    { id: 1, name: 'laptop' },
-    { id: 2, name: 'tivi' },
-  ];
-  const { keyword, id } = req.query;
-
-  const result = products.filter((product) => {
-    return (
-      (keyword && product.name.toLowerCase().includes(keyword.toLowerCase())) ||
-      product.id == id
-    );
+app.post('/user', (req, res) => {
+  res.send({
+    bodypossrer: req.body,
   });
-  res.send(result);
 });
-
-app.listen(8080, () => {
+app.listen(8000, () => {
   console.log('Server chạy thành công');
 });
