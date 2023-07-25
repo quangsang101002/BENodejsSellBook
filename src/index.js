@@ -36,6 +36,6 @@ app.post('/user', (req, res) => {
     bodypossrer: req.body,
   });
 });
-app.listen(8001, () => {
+app.listen(8009, () => {
   console.log('Server http://localhost:8000/ chạy thành công');
 });
