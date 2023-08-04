@@ -39,31 +39,58 @@ const addUser = (req, res) => {
 const getDetailUser = (req, res) => {
   const { id } = req.params;
 
-  const search = users.filter((user) => user.id == id);
-
-  res.render('pages/users/index', {
-    title: 'welcome',
-    users: search,
-  });
+  const user = users.find((user) => user.id == id);
+  if (user) {
+    users = users.filter((user) => user.id == id);
+    res.redirect('/users');
+  } else {
+    res.render('errors/404', {
+      msg: 'Người dùng không tồn tại',
+    });
+  }
 };
 
 // Trả về HTML form cập nhật user
-const viewEditUser = (req, res) => {};
+const viewEditUser = (req, res) => {
+  const { id } = req.params;
+
+  users.map((user) => {
+    if (user.id == id) {
+      res.render('pages/users/edit', {
+        user: user,
+      });
+    }
+  });
+};
 
 // Thực thi cập nhật user
-const updateUser = (req, res) => {};
+const updateUser = (req, res) => {
+  const { id } = req.params;
+  const { username, email } = req.body;
+  const update = users.map((user) => {
+    if (user.id == id) {
+      user.username = username;
+      user.email = email;
+    }
+    return user;
+  });
+  users = update;
+  res.redirect('/users');
+};
 
 // Thực thi xóa user
 const deleteUser = (req, res) => {
   const { id } = req.params;
+  const user = users.find((user) => user.id == id);
+  if (user) {
+    users = users.filter((user) => user.id != id);
 
-  const deleteuser = users.filter((user) => user.id != id);
-
-  res.render('pages/users/index', {
-    title: 'welcome',
-    users: deleteuser,
-  });
-  res.redirect('/users');
+    res.redirect('/users');
+  } else {
+    res.render('errors/404', {
+      msg: 'Người dùng không tồn tại',
+    });
+  }
 };
 
 export default {
