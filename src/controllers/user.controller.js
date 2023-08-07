@@ -1,4 +1,3 @@
-import getNextId from '../utilities/getNextId.js';
 import pool from '../configs/connectDB.js';
 
 // Trả về trang HTML hiển thị danh sách users
