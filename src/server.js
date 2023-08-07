@@ -2,8 +2,9 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import fs from 'fs';
-import router from './routers.js';
+import initWebRouter from './router/routers.js';
 import methodOverride from 'method-override';
+import configViewEngine from './configs/viewEnggine.js';
 
 const app = express();
 
@@ -17,16 +18,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
+initWebRouter(app);
+
 // Cấu hình morgan
 const accessLogStream = fs.createWriteStream('logs/access.log', { flags: 'a' });
 app.use(morgan('combined', { stream: accessLogStream }));
 
 // Cấu hình EJS template
-app.set('view engine', 'ejs');
-app.set('views', 'src/views');
+configViewEngine(app);
 
-app.use('/', router);
-
-app.listen(8000, () => {
+app.listen(8001, () => {
   console.log('Server Started');
 });
