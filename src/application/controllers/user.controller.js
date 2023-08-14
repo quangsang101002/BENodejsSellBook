@@ -17,7 +17,7 @@ const searchUsers = (req, res) => {
 
 const addUsers = (req, res) => {
   const bodyUsers = req.body;
-  const avatar = req.files;
+  const avatar = req.file;
 
   userServices.addUsers({ ...bodyUsers, avatar }, (error, result) => {
     if (error) {

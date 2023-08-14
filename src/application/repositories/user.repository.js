@@ -1,5 +1,7 @@
 import getConnection from '../../config/connection.database.js';
 import moment from 'moment/moment.js';
+import { randomString } from '../../utilities/string.util.js';
+import { encryptPassWord } from '../../utilities/hash.util.js';
 const currentTime = moment();
 const searchUsers = (params, callback) => {
   const connection = getConnection();
@@ -49,6 +51,7 @@ const addUsers = (user, callback) => {
   const connection = getConnection();
   const userToCeate = {
     ...user,
+    password: encryptPassWord(user.password),
     create_by: 1,
     create_at: currentTime.format('YYYY-MM-DD HH:mm:ss'),
     update_by: 1,
@@ -75,6 +78,33 @@ const getDetailUser = (params, callback) => {
     }
   });
 };
+
+const getUserbyUserNameAndRole = (username, role, callback) => {
+  const connection = getConnection();
+  const sqlDetail = 'SELECT * FROM users WHERE username= ? and role = ?';
+  connection.query(sqlDetail, [username, role], (error, result) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, result);
+    }
+  });
+  connection.end();
+};
+
+const createApiKey = (userId, callback) => {
+  const apiKey = userId + randomString(128);
+  const connection = getConnection();
+  const sqlDelete = 'UPDATE users SET api_key = ? WHERE id = ? ';
+  connection.query(sqlDelete, [apiKey, userId], (error, result) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, apiKey);
+    }
+  });
+};
+
 const updateUser = (params, id, callback) => {
   const connection = getConnection();
 
@@ -97,7 +127,6 @@ const updateUser = (params, id, callback) => {
 };
 
 const deleteUser = (params, callback) => {
-  console.log(params);
   const connection = getConnection();
   const sqlDelete = 'DELETE FROM users WHERE id = ?';
   connection.query(sqlDelete, [params], (error, result) => {
@@ -112,6 +141,8 @@ export default {
   searchUsers,
   addUsers,
   getDetailUser,
+  getUserbyUserNameAndRole,
   updateUser,
   deleteUser,
+  createApiKey,
 };

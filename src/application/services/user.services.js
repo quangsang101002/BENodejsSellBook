@@ -95,9 +95,8 @@ const addUsers = (requestBody, callback) => {
 
     if (requestBody.avatar) {
       const avatarExtension = getFilleExtention(originalname);
-      avatar = `avatar/${requestBody.username}.${avatarExtension}`;
-      const avatarLocation = `./public/${avatar}`;
-
+      const avatar = `avatar/${requestBody.username}.${avatarExtension}`;
+      const avatarLocation = './public/' + avatar;
       // Copy upload file to saving location
       fs.cpSync(path, avatarLocation);
     }

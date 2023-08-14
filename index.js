@@ -3,7 +3,9 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import fs from 'fs';
 import router from './src/application/routers.js';
+// import cors from 'cors';
 
+// app.use(cors());
 const app = express();
 app.use(express.static('public'));
 // app.use(express.static('./src/public'));
