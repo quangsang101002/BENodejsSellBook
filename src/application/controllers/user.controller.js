@@ -16,20 +16,43 @@ const searchUsers = (req, res) => {
 };
 
 const addUsers = (req, res) => {
+  if (req.auth.role !== 1) {
+    res.status(403).send({
+      error: 'Không có quyền truy cập',
+    });
+    return;
+  }
   const bodyUsers = req.body;
   const avatar = req.file;
+  userServices.addUsers(
+    { ...bodyUsers, authId: req.auth.id, avatar: avatar },
+    (error, result) => {
+      if (error) {
+        res.status(500).send({
+          error: error,
+        });
+      } else {
+        res.status(201).send();
+      }
+    },
+  );
+};
 
-  userServices.addUsers({ ...bodyUsers, avatar }, (error, result) => {
+const addSingle = (req, res) => {
+  const avatar = req.file;
+  const id = req.params;
+
+  userServices.addSingle(avatar, id, (error, result) => {
     if (error) {
-      res.status(500).send({
-        error: error,
-      });
+      res.status(500).send({ error: error });
     } else {
       res.status(201).send();
     }
   });
 };
+
 const getDetailUser = (req, res) => {
+  console.log('getDetailUse', req.auth.id);
   const { id } = req.params;
   userServices.getDetailUser(id, (error, result) => {
     if (error) {
@@ -60,10 +83,8 @@ const updateUser = (req, res) => {
 };
 const deleteUser = (req, res) => {
   const { id } = req.params;
-  console.log('idc', id);
   userServices.deleteUser(id, (error, result) => {
     if (error) {
-      console.log(error);
       res.status(500).send({
         error: error.message,
       });
@@ -72,9 +93,11 @@ const deleteUser = (req, res) => {
     }
   });
 };
+
 export default {
   searchUsers,
   addUsers,
+  addSingle,
   getDetailUser,
   updateUser,
   deleteUser,

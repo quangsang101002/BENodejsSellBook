@@ -92,10 +92,9 @@ const addUsers = (requestBody, callback) => {
     callback(Object.fromEntries(validateErrors), null);
   } else {
     let avatar = null;
-
     if (requestBody.avatar) {
       const avatarExtension = getFilleExtention(originalname);
-      const avatar = `avatar/${requestBody.username}.${avatarExtension}`;
+      avatar = `avatar/${requestBody.username}.${avatarExtension}`;
       const avatarLocation = './public/' + avatar;
       // Copy upload file to saving location
       fs.cpSync(path, avatarLocation);
@@ -109,6 +108,8 @@ const addUsers = (requestBody, callback) => {
       password: requestBody.password,
       role: requestBody.role,
       avatar: avatar,
+      create_by: requestBody.authId,
+      update_by: requestBody.authId,
     };
 
     userRepository.addUsers(newUser, (error, result) => {
@@ -124,6 +125,33 @@ const addUsers = (requestBody, callback) => {
   }
 };
 
+const addSingle = (requestBody, id, callback) => {
+  let originalname = null;
+  let path = null;
+  let avatar = null;
+  if (requestBody) {
+    originalname = requestBody.originalname;
+    path = requestBody.path;
+    const avatarExtension = getFilleExtention(originalname);
+    avatar = `avatar/admin.${avatarExtension}`;
+    const avatarLocation = './public/' + avatar;
+    fs.cpSync(path, avatarLocation);
+    fs.rmSync(path);
+  } else {
+    return;
+  }
+  userRepository.addSingle(avatar, id, (error, result) => {
+    if (path) {
+      fs.rmSync(path);
+    }
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, result);
+    }
+  });
+};
+
 const getDetailUser = (id, callback) => {
   if (!/^[0-9]+$/.test(id)) {
     callback({ message: 'ID phải là số' }, null);
@@ -134,7 +162,7 @@ const getDetailUser = (id, callback) => {
       } else if (result.length === 0) {
         callback({ message: 'User not found' }, null);
       } else {
-        callback(null, result);
+        callback(null, result[0]);
       }
     });
   }
@@ -169,6 +197,7 @@ const deleteUser = (id, callback) => {
 export default {
   searchUsers,
   addUsers,
+  addSingle,
   getDetailUser,
   updateUser,
   deleteUser,

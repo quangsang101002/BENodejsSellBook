@@ -17,8 +17,33 @@ const login = (req, res) => {
     }
   });
 };
+
+const getAuth = (request, response) => {
+  authServices.getAuth(request.auth.id, (error, result) => {
+    if (error) {
+      response.status(401).send({
+        error: error,
+      });
+    } else {
+      response.send(result);
+    }
+  });
+};
+const logout = (request, response) => {
+  authServices.logout(request.auth.id, (error, result) => {
+    if (error) {
+      response.status(401).send({
+        error: error,
+      });
+    } else {
+      response.send(result);
+    }
+  });
+};
 const register = (req, res) => {};
 export default {
   login,
   register,
+  logout,
+  getAuth,
 };
