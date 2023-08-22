@@ -1,5 +1,4 @@
 import authServices from '../services/auth.services.js';
-
 const login = (req, res) => {
   const requestBody = req.body;
   const params = {
@@ -40,7 +39,18 @@ const logout = (request, response) => {
     }
   });
 };
-const register = (req, res) => {};
+const register = (req, res) => {
+  const reqBody = req.body;
+  authServices.register(reqBody, (error, result) => {
+    if (error) {
+      res.status(500).send({
+        error: error,
+      });
+    } else {
+      response.send(result);
+    }
+  });
+};
 export default {
   login,
   register,

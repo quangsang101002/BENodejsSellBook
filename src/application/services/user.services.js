@@ -169,6 +169,7 @@ const getDetailUser = (id, callback) => {
 };
 
 const updateUser = (params, id, callback) => {
+  // TODO: validate
   userRepository.updateUser(params, id, (error, result) => {
     if (error) {
       callback(error, null);

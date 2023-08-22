@@ -1,6 +1,6 @@
 import getConnection from '../../config/connection.database.js';
-import moment from 'moment/moment.js';
 import { encryptPassWord } from '../../utilities/hash.util.js';
+import moment from 'moment/moment.js';
 const currentTime = moment();
 const searchUsers = (params, callback) => {
   const connection = getConnection();
@@ -162,28 +162,29 @@ const updateUser = (params, id, callback) => {
   const { username, last_name, first_name, email } = params;
   const updateTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
 
-  const sqlUpdate =
-    'UPDATE users SET username=?, last_name=?, first_name=?, email=? , update_at = ? WHERE id = ?';
+  let sqlUpdate =
+    'UPDATE users SET username=?, last_name=?, first_name=?, email=? , update_at = ?';
+  let bindParams = [username, last_name, first_name, email, updateTime];
 
   if (params.password) {
-    sql += ', password = ?';
+    sqlUpdate += ', password = ?';
     bindParams.push(encryptPassWord(params.password));
   }
   if (params.avatar) {
-    sql += ', avatar = ?';
+    sqlUpdate += ', avatar = ?';
     bindParams.push(params.avatar);
   }
-  connection.query(
-    sqlUpdate,
-    [username, last_name, first_name, email, updateTime, id],
-    (error, result) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        callback(null, result);
-      }
-    },
-  );
+
+  sqlUpdate += ' WHERE id = ?';
+  bindParams.push(id);
+  connection.query(sqlUpdate, bindParams, (error, result) => {
+    if (error) {
+      console.log(error);
+      callback(error, null);
+    } else {
+      callback(null, result);
+    }
+  });
 };
 
 const deleteUser = (params, callback) => {
@@ -197,6 +198,7 @@ const deleteUser = (params, callback) => {
     }
   });
 };
+
 export default {
   searchUsers,
   addUsers,

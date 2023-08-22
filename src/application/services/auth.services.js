@@ -89,7 +89,9 @@ const getAuth = (authId, callback) => {
   });
 };
 
-const register = (req, res) => {};
+const register = (bodyRegister, callback) => {
+  userRepository.register(bodyRegister, (error, result) => {});
+};
 export default {
   login,
   logout,

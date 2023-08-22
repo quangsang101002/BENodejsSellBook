@@ -3,7 +3,6 @@ const searchUsers = (req, res) => {
   const { name, page, limit } = req.query;
   userServices.searchUsers({ name, page, limit }, (error, result) => {
     if (error) {
-      console.log(error);
       res.status(500).send({
         error: error.message,
       });
