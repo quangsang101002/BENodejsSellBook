@@ -6,9 +6,6 @@ const searchUsers = (params, callback) => {
   const connection = getConnection();
   let sql = ' FROM users';
   const bindParams = [];
-  const page = params.page || 1;
-  const limit = params.limit || 5;
-  const offset = (page - 1) * limit;
 
   if (params.name) {
     const name = '%' + params.name + '%';
@@ -23,10 +20,16 @@ const searchUsers = (params, callback) => {
       if (error) {
         callback(error, null);
       } else if (countResult[0].total !== 0) {
-        const selectColumnsQuery =
+        let selectColumnsQuery =
           'SELECT id, username, email, first_name, last_name, role, avatar, create_at, create_by, update_at, update_by' +
-          sql +
-          ` LIMIT ${limit} OFFSET ${offset}`;
+          sql;
+
+        if (params.limit && params.page) {
+          const page = params.page || 1;
+          const limit = params.limit || 5;
+          const offset = (page - 1) * limit;
+          selectColumnsQuery += ` LIMIT ${limit} OFFSET ${offset}`;
+        }
 
         connection.query(selectColumnsQuery, bindParams, (error, result) => {
           if (error) {
@@ -49,6 +52,7 @@ const searchUsers = (params, callback) => {
     },
   );
 };
+
 const addUsers = (user, callback) => {
   const connection = getConnection();
   const userToCeate = {
@@ -198,7 +202,6 @@ const deleteUser = (params, callback) => {
     }
   });
 };
-
 export default {
   searchUsers,
   addUsers,

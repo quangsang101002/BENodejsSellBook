@@ -6,7 +6,7 @@ const searchProduct = (params, callback) => {
   let sql = ' FROM products';
   const bindParams = [];
   const page = params.page || 1;
-  const limit = params.limit || 5;
+  const limit = params.limit || 7;
   const offset = (page - 1) * limit;
 
   if (params.name) {
@@ -90,7 +90,6 @@ const deleteProduct = (params, callback) => {
 };
 
 const updateProduct = (params, callback) => {
-  console.log('---->>', params);
   const { sku, name, category, description, unit_price } = params;
   const id = params.productId.id;
   const idUpdate = params.authId;

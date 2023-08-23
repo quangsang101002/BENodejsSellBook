@@ -36,7 +36,7 @@ router.delete('/product/:id', productController.deleteProduct);
 
 // Order management
 router.get('/order', orderController.searchOrder);
-router.post('/order', upload.single('image'), orderController.addOrder);
+router.post('/order', upload.single('order'), orderController.addOrder);
 router.get('/order/:id', orderController.getDetailOrder);
 router.put('/order/:id', upload.single('image'), orderController.updateOrder);
 router.delete('/order/:id', orderController.deleteOrder);
