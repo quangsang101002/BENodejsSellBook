@@ -70,8 +70,9 @@ const addUsers = (user, callback) => {
       callback(null, result);
     }
   });
+  connection.end();
 };
-const addSingle = (params, idAdmin, callback) => {
+const updateAvatar = (params, idAdmin, callback) => {
   const id = idAdmin.id;
   const connection = getConnection();
   const sqlUpdate = 'UPDATE users SET avatar = ? WHERE id = ?';
@@ -82,6 +83,7 @@ const addSingle = (params, idAdmin, callback) => {
       callback(null, result);
     }
   });
+  connection.end();
 };
 const getDetailUser = (params, callback) => {
   const connection = getConnection();
@@ -202,14 +204,67 @@ const deleteUser = (params, callback) => {
     }
   });
 };
+const register = async (newUser, callback) => {
+  const connection = getConnection();
+  const getUserQuery = 'SELECT username, email FROM rikkei_academy.users';
+
+  try {
+    // Fetch existing users from the database
+    const existingUsers = await new Promise((resolve, reject) => {
+      connection.query(getUserQuery, (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+
+    // Check if the provided username or email already exists
+    const usernameExists = existingUsers.some(
+      (user) => user.username === newUser.username,
+    );
+    const emailExists = existingUsers.some(
+      (user) => user.email === newUser.email,
+    );
+
+    if (usernameExists) {
+      callback({ error: 'Tên người dùng đã tồn tại' }, null);
+    } else if (emailExists) {
+      callback({ error: 'Email người dùng đã tồn tại' }, null);
+    } else {
+      const registerUser = {
+        ...newUser,
+        password: encryptPassWord(newUser.password),
+        create_at: currentTime.format('YYYY-MM-DD HH:mm:ss'),
+        update_at: currentTime.format('YYYY-MM-DD HH:mm:ss'),
+      };
+
+      const sqlRegister = 'INSERT INTO users SET ?';
+
+      // Insert the new user into the database
+      connection.query(sqlRegister, [registerUser], (error, result) => {
+        if (error) {
+          callback(error, null);
+        } else {
+          callback(null, result);
+        }
+      });
+    }
+  } catch (error) {
+    callback(error, null);
+  }
+};
+
 export default {
   searchUsers,
   addUsers,
-  addSingle,
+  updateAvatar,
   getDetailUser,
   getUserbyUserNameAndRole,
   updateUser,
   deleteUser,
   createApiKey,
   getUserByApiKey,
+  register,
 };

@@ -4,27 +4,26 @@ const currentTime = moment();
 
 const searchOrder = (params, callback) => {
   const connection = getConnection();
-  let sql = ' FROM orders';
+  let sql =
+    'SELECT users.username, orders.* FROM rikkei_academy.orders LEFT JOIN users ON orders.user_id = users.id';
   const bindParams = [];
   const page = params.page || 1;
-  const limit = params.limit || 2;
+  const limit = params.limit || 5;
   const offset = (page - 1) * limit;
 
   if (params.name) {
     const name = '%' + params.name + '%';
-    sql += ' WHERE note LIKE ?';
+    sql += ' WHERE username LIKE ?';
     bindParams.push(name);
   }
-  // SELECT order_id, serial_number, user_id,order_at, total_price, status, note, created_at, updated_at
+
   connection.query(
-    'SELECT COUNT(1) AS totalOrders' + sql,
-    bindParams,
+    'SELECT COUNT(1) AS totalOrders FROM orders',
     (error, countResult) => {
       if (error) {
         callback(error, null);
       } else if (countResult[0].totalOrders !== 0) {
-        const selectColumnsQuery =
-          'SELECT *' + sql + ` LIMIT ${limit} OFFSET ${offset}`;
+        const selectColumnsQuery = sql + ` LIMIT ${limit} OFFSET ${offset}`;
 
         connection.query(selectColumnsQuery, bindParams, (error, result) => {
           if (error) {
@@ -47,6 +46,7 @@ const searchOrder = (params, callback) => {
     },
   );
 };
+
 const addOrder = (bodyOrder, callback) => {
   const connection = getConnection();
   const productToCreate = {
@@ -66,8 +66,38 @@ const addOrder = (bodyOrder, callback) => {
   });
 };
 const getDetailOrder = (req, res) => {};
-const deleteOrder = (req, res) => {};
-const updateOrder = (req, res) => {};
+const deleteOrder = (id, callback) => {
+  const connection = getConnection();
+
+  const sqlDelete = 'DELETE FROM orders WHERE order_id = ?';
+  connection.query(sqlDelete, [id], (error, result) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, result);
+    }
+  });
+};
+const updateOrder = (params, callback) => {
+  const bodyStatus = params.bodyOrder.status;
+  const id = params.idOrder.id;
+  const idUpdate = params.authId;
+  const connection = getConnection();
+  const timeUpdate = currentTime.format('YYYY-MM-DD HH:mm:ss');
+  const sqlUpdate =
+    'UPDATE orders SET status = ?, updated_at = ?, updated_by_id= ? WHERE order_id = ?';
+  connection.query(
+    sqlUpdate,
+    [Number(bodyStatus), timeUpdate, idUpdate, Number(id)],
+    (error, result) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        callback(null, result);
+      }
+    },
+  );
+};
 export default {
   addOrder,
   searchOrder,

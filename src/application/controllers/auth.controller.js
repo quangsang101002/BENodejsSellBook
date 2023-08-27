@@ -47,7 +47,7 @@ const register = (req, res) => {
         error: error,
       });
     } else {
-      response.send(result);
+      res.status(201).send();
     }
   });
 };

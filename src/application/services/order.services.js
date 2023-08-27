@@ -9,7 +9,6 @@ const searchOrder = (params, callback) => {
   });
 };
 const addOrder = (requestBody, callback) => {
-  console.log('statuus', requestBody.status);
   let originalname = null;
   let path = null;
 
@@ -88,8 +87,24 @@ const addOrder = (requestBody, callback) => {
   }
 };
 const getDetailOrder = (req, res) => {};
-const deleteOrder = (req, res) => {};
-const updateOrder = (req, res) => {};
+const deleteOrder = (idOrder, callback) => {
+  orderRepository.deleteOrder(idOrder, (error, result) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, result);
+    }
+  });
+};
+const updateOrder = (params, callback) => {
+  orderRepository.updateOrder(params, (error, result) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, result);
+    }
+  });
+};
 export default {
   addOrder,
   searchOrder,

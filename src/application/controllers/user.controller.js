@@ -37,15 +37,16 @@ const addUsers = (req, res) => {
   );
 };
 
-const addSingle = (req, res) => {
+const updateAvatar = (req, res) => {
   const avatar = req.file;
   const id = req.params;
+  console.log(avatar, id);
 
-  userServices.addSingle(avatar, id, (error, result) => {
+  userServices.updateAvatar(avatar, id, (error, result) => {
     if (error) {
       res.status(500).send({ error: error });
     } else {
-      res.status(201).send();
+      res.status(204).send();
     }
   });
 };
@@ -96,7 +97,7 @@ const deleteUser = (req, res) => {
 export default {
   searchUsers,
   addUsers,
-  addSingle,
+  updateAvatar,
   getDetailUser,
   updateUser,
   deleteUser,

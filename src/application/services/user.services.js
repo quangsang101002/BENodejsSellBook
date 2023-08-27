@@ -125,7 +125,7 @@ const addUsers = (requestBody, callback) => {
   }
 };
 
-const addSingle = (requestBody, id, callback) => {
+const updateAvatar = (requestBody, id, callback) => {
   let originalname = null;
   let path = null;
   let avatar = null;
@@ -140,10 +140,7 @@ const addSingle = (requestBody, id, callback) => {
   } else {
     return;
   }
-  userRepository.addSingle(avatar, id, (error, result) => {
-    if (path) {
-      fs.rmSync(path);
-    }
+  userRepository.updateAvatar(avatar, id, (error, result) => {
     if (error) {
       callback(error, null);
     } else {
@@ -198,7 +195,7 @@ const deleteUser = (id, callback) => {
 export default {
   searchUsers,
   addUsers,
-  addSingle,
+  updateAvatar,
   getDetailUser,
   updateUser,
   deleteUser,

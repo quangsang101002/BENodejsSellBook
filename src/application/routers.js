@@ -17,7 +17,7 @@ router.post('/register', upload.single('register'), authController.register);
 // User management
 router.get('/users', userController.searchUsers);
 router.post('/users', upload.single('avatar'), userController.addUsers);
-router.put('/single/:id', upload.single('avatar'), userController.addSingle);
+router.put('/avatar/:id', upload.single('avatar'), userController.updateAvatar);
 router.get('/users/:id', userController.getDetailUser);
 router.put('/users/:id', upload.single('avatar'), userController.updateUser);
 router.delete('/users/:id', userController.deleteUser);
@@ -38,7 +38,7 @@ router.delete('/product/:id', productController.deleteProduct);
 router.get('/order', orderController.searchOrder);
 router.post('/order', upload.single('order'), orderController.addOrder);
 router.get('/order/:id', orderController.getDetailOrder);
-router.put('/order/:id', upload.single('image'), orderController.updateOrder);
+router.put('/order/:id', upload.single('status'), orderController.updateOrder);
 router.delete('/order/:id', orderController.deleteOrder);
 // Contact management
 
