@@ -25,11 +25,15 @@ router.delete('/users/:id', userController.deleteUser);
 // Product management
 
 router.get('/product', productController.searchProduct);
-router.post('/product', upload.single('image'), productController.addProduct);
+router.post(
+  '/product',
+  upload.fields([{ name: 'avatar' }, { name: 'gallery' }]),
+  productController.addProduct,
+);
 router.get('/product/:id', productController.getDetailProduct);
 router.put(
   '/product/:id',
-  upload.single('image'),
+  upload.single('images'),
   productController.updateProduct,
 );
 router.delete('/product/:id', productController.deleteProduct);

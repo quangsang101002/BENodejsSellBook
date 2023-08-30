@@ -229,9 +229,9 @@ const register = async (newUser, callback) => {
     );
 
     if (usernameExists) {
-      callback({ error: 'Tên người dùng đã tồn tại' }, null);
+      callback({ username: 'Tên người dùng đã tồn tại' }, null);
     } else if (emailExists) {
-      callback({ error: 'Email người dùng đã tồn tại' }, null);
+      callback({ email: 'Email người dùng đã tồn tại' }, null);
     } else {
       const registerUser = {
         ...newUser,

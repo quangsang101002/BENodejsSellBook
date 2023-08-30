@@ -146,6 +146,7 @@ const register = (bodyRegister, callback) => {
 
   if (validateErrors.size !== 0) {
     callback(Object.fromEntries(validateErrors), null);
+    return;
   }
 
   const newUser = {

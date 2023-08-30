@@ -133,7 +133,7 @@ const updateAvatar = (requestBody, id, callback) => {
     originalname = requestBody.originalname;
     path = requestBody.path;
     const avatarExtension = getFilleExtention(originalname);
-    avatar = `avatar/admin.${avatarExtension}`;
+    avatar = `avatarAdmin/admin.${avatarExtension}`;
     const avatarLocation = './public/' + avatar;
     fs.cpSync(path, avatarLocation);
     fs.rmSync(path);

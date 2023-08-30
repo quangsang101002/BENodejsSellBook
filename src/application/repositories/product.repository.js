@@ -117,10 +117,41 @@ const updateProduct = (params, callback) => {
     },
   );
 };
+const getProductBySkuAndName = (sku, nameProduct, callback) => {
+  const querySku = 'SELECT * FROM products WHERE sku = ?';
+  const queryNameProduct = 'SELECT * FROM products WHERE name = ?';
+  const connection = getConnection();
+
+  // Thực hiện lệnh SQL để tìm sản phẩm theo sku
+  connection.query(querySku, [sku], (errorSku, resultsSku) => {
+    if (errorSku) {
+      callback(errorSku, null);
+    } else {
+      // Thực hiện lệnh SQL để tìm sản phẩm theo nameProduct
+      connection.query(
+        queryNameProduct,
+        [nameProduct],
+        (errorName, resultsName) => {
+          if (errorName) {
+            callback(errorName, null);
+          } else {
+            const result = {
+              bySku: resultsSku[0] || null,
+              byNameProduct: resultsName[0] || null,
+            };
+            callback(null, result);
+          }
+        },
+      );
+    }
+  });
+};
+
 export default {
   searchProduct,
   addProduct,
   getDetailProduct,
   deleteProduct,
   updateProduct,
+  getProductBySkuAndName,
 };

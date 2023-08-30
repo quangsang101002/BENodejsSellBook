@@ -16,10 +16,19 @@ const searchProduct = (req, res) => {
 };
 const addProduct = (req, res) => {
   const bodyUsers = req.body;
-  const avatar = req.file;
+  const avatar = req.files['avatar'];
+  const gallery = req.files['gallery'];
+
+  let responseSent = false; // Cờ kiểm tra đã gửi phản hồi chưa
+
   productServices.addProduct(
-    { ...bodyUsers, authId: req.auth.id, avatar: avatar },
+    { ...bodyUsers, authId: req.auth.id, avatar: avatar, gallery: gallery },
     (error, result) => {
+      if (responseSent) {
+        return; // Đã gửi phản hồi, không thực hiện gì thêm
+      }
+
+      responseSent = true; // Đánh dấu là đã gửi phản hồi
       if (error) {
         res.status(500).send({
           error: error,
@@ -30,9 +39,9 @@ const addProduct = (req, res) => {
     },
   );
 };
+
 const getDetailProduct = (req, res) => {
   const productId = req.params;
-
   productServices.getDetailProduct(productId, (error, result) => {
     if (error) {
       res.status(500).send({
@@ -73,10 +82,12 @@ const updateProduct = (req, res) => {
     },
   );
 };
+const getProductBySku = () => {};
 export default {
   addProduct,
   searchProduct,
   getDetailProduct,
   deleteProduct,
   updateProduct,
+  getProductBySku,
 };
