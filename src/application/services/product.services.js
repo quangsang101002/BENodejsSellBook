@@ -13,26 +13,25 @@ const searchProduct = (params, callback) => {
 };
 
 const addProduct = (requestBody, callback) => {
-  let originalnameAvatar = null;
-  let pathAvatar = null;
-  let originalnameGallery = null;
-  let pathGallery = null;
+  let avatarImages = [];
+  let galleryImages = [];
 
   if (requestBody.avatar) {
-    requestBody.avatar.map((img) => {
-      originalnameAvatar = img.originalname;
-      pathAvatar = img.path;
-    });
-  }
-  if (requestBody.gallery) {
-    requestBody.gallery.map((img) => {
-      originalnameGallery = img.originalname;
-      pathGallery = img.path;
-    });
+    avatarImages = requestBody.avatar.map((img) => ({
+      originalname: img.originalname,
+      path: img.path,
+    }));
   }
 
+  if (requestBody.gallery) {
+    galleryImages = requestBody.gallery.map((img) => ({
+      originalname: img.originalname,
+      path: img.path,
+    }));
+  }
   const validate = (params) => {
     let errors = new Map();
+    // Validate nameproduct
     if (!params.name) {
       errors.set('nameProduct', 'Tên sản phẩm không được bỏ trống.');
     } else if (typeof params.name !== 'string') {
@@ -40,27 +39,30 @@ const addProduct = (requestBody, callback) => {
     } else if (params.name.length < 5 || params.name.length > 100) {
       errors.set('nameProduct', 'Tên sản phẩm chỉ cho phép 4 đến 10 ký tự.');
     }
+    // Validate sku mã sản phẩm
     if (!params.sku) {
-      errors.set('sku', 'Mã sản phẩm không được bỏ trống.');
+      errors.set('sku', 'mã sản phẩm không được bỏ trống.');
     } else if (typeof params.sku !== 'string') {
-      errors.set('sku', 'Mã sản phẩm phải là chuỗi.');
+      errors.set('sku', 'mã sản phẩm phải là chuỗi.');
     } else if (params.sku.length < 4 || params.sku.length > 50) {
-      errors.set('sku', 'Mã sản phẩm chỉ cho phép 4 đến 50 ký tự.');
+      errors.set('sku', 'sku chỉ cho phép 4 đến 50 ký tự.');
     }
+    // Validate description
     if (typeof params.description !== 'string') {
-      errors.set('description', 'Miêu tả phải là chuỗi.');
+      errors.set('description', 'miêu tả phải là chuỗi.');
     } else if (params.description && params.description.length > 50) {
-      errors.set('description', 'Miêu tả chỉ cho phép dưới 50 ký tự.');
+      errors.set('description', 'miêu tả chỉ cho phép dưới 50 ký tự.');
     }
+    // Validate unit_price
     if (typeof params.unit_price !== 'string') {
-      errors.set('unit_price', 'Giá Tên phải là chuỗi.');
+      errors.set('unit_price', ' Giá Tên phải là chuỗi.');
     } else if (params.first_name && params.unit_price.length > 50) {
-      errors.set('unit_price', 'Giá Tên chỉ cho phép dưới 50 ký tự.');
+      errors.set('unit_price', ' Giá Tên chỉ cho phép dưới 50 ký tự.');
     }
     return errors;
   };
-
   const validateErrors = validate(requestBody);
+
   if (validateErrors.size !== 0) {
     callback(Object.fromEntries(validateErrors), null);
   } else {
@@ -72,39 +74,39 @@ const addProduct = (requestBody, callback) => {
           callback(error, null);
         } else if (existingProducts.bySku) {
           callback(
-            { message: 'Product with the same SKU already exists' },
+            { messageSku: 'Product with the same SKU already exists' },
             null,
           );
         } else if (existingProducts.byNameProduct) {
           callback(
-            { message: 'Product with the same name already exists' },
+            { messageName: 'Product with the same name already exists' },
             null,
           );
         } else {
           let photosArray = [];
           if (requestBody.avatar) {
             requestBody.avatar.forEach((img, index) => {
-              const photosExtension = getFilleExtention(img.originalname);
+              let photosExtension = getFilleExtention(img.originalname);
               const photos = `avatar/${index}-${requestBody.name}.${photosExtension}`;
               const photosLocation = './public/' + photos;
-              if (pathAvatar) {
-                fs.cpSync(pathAvatar, photosLocation);
+              if (img.path) {
+                fs.cpSync(img.path, photosLocation);
                 photosArray.push(photos);
               } else {
-                console.error('Invalid image path:', pathAvatar);
+                console.error('Invalid image path:', img.path);
               }
             });
           }
           if (requestBody.gallery) {
             requestBody.gallery.forEach((img, index) => {
-              const photosExtension = getFilleExtention(img.originalname);
+              let photosExtension = getFilleExtention(img.originalname);
               const photos = `photosGallery/${index}-${requestBody.name}.${photosExtension}`;
               const photosLocation = './public/' + photos;
-              if (pathGallery) {
-                fs.cpSync(pathGallery, photosLocation);
+              if (img.path) {
+                fs.cpSync(img.path, photosLocation);
                 photosArray.push(photos);
               } else {
-                console.error('Invalid image path:', pathGallery);
+                console.error('Invalid image path:', img.path);
               }
             });
           }
@@ -119,10 +121,6 @@ const addProduct = (requestBody, callback) => {
             updated_by_id: requestBody.authId,
           };
           productRepository.addProduct(newUser, (error, result) => {
-            if (pathAvatar && pathGallery) {
-              fs.rmSync(pathAvatar);
-              fs.rmSync(pathGallery);
-            }
             if (error) {
               callback(error, null);
             } else {
@@ -134,7 +132,6 @@ const addProduct = (requestBody, callback) => {
     );
   }
 };
-
 const getDetailProduct = (params, callback) => {
   productRepository.getDetailProduct(params, (error, result) => {
     if (error) {
