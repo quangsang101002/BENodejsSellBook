@@ -135,7 +135,15 @@ const updateAvatar = (requestBody, id, callback) => {
     const avatarExtension = getFilleExtention(originalname);
     avatar = `avatarAdmin/admin.${avatarExtension}`;
     const avatarLocation = './public/' + avatar;
-    fs.cpSync(path, avatarLocation);
+
+    // Kiểm tra xem tệp cũ có tồn tại không
+    if (fs.existsSync(avatarLocation)) {
+      // Nếu tồn tại, thì xóa tệp cũ
+      fs.rmSync(avatarLocation);
+    }
+
+    // Sao chép tệp mới vào vị trí mới
+    fs.copyFileSync(path, avatarLocation);
     fs.rmSync(path);
   } else {
     return;

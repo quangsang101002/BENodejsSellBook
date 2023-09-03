@@ -143,7 +143,39 @@ const getUserByApiKey = (apiKey, callback) => {
 
   connection.end();
 };
+const getUserByApiKeyCustomers = (apiKey, callback) => {
+  const connection = getConnection();
 
+  connection.query(
+    `
+    SELECT
+      id,
+      username,
+      email,
+      first_name,
+      last_name,
+      role,
+      avatar,
+      create_at,
+      create_by,
+      update_at,
+      update_by
+    FROM users
+    WHERE
+      api_key = ?
+  `,
+    [apiKey],
+    (error, result) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        callback(null, result);
+      }
+    },
+  );
+
+  connection.end();
+};
 const createApiKey = (userId, apiKey, callback) => {
   const connection = getConnection();
 
@@ -266,5 +298,6 @@ export default {
   deleteUser,
   createApiKey,
   getUserByApiKey,
+  getUserByApiKeyCustomers,
   register,
 };

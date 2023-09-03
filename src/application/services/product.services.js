@@ -91,6 +91,7 @@ const addProduct = (requestBody, callback) => {
               const photosLocation = './public/' + photos;
               if (img.path) {
                 fs.cpSync(img.path, photosLocation);
+                fs.rmSync(img.path);
                 photosArray.push(photos);
               } else {
                 console.error('Invalid image path:', img.path);
@@ -104,6 +105,7 @@ const addProduct = (requestBody, callback) => {
               const photosLocation = './public/' + photos;
               if (img.path) {
                 fs.cpSync(img.path, photosLocation);
+                fs.rmSync(img.path);
                 photosArray.push(photos);
               } else {
                 console.error('Invalid image path:', img.path);

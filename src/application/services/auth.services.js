@@ -79,6 +79,7 @@ const logout = (authId, callback) => {
     }
   });
 };
+
 const getAuth = (authId, callback) => {
   userRepository.getDetailUser(authId, (error, result) => {
     if (error) {
@@ -89,6 +90,15 @@ const getAuth = (authId, callback) => {
   });
 };
 
+const getAuthCustomer = (authId, callback) => {
+  userRepository.getDetailUser(authId, (error, result) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, result[0]);
+    }
+  });
+};
 const register = (bodyRegister, callback) => {
   const validate = (params) => {
     let errors = new Map();
@@ -173,4 +183,5 @@ export default {
   logout,
   register,
   getAuth,
+  getAuthCustomer,
 };

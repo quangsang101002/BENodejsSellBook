@@ -13,28 +13,54 @@ export default function (request, response, next) {
     next();
   } else {
     const apiKey = request.header('X-API-Key');
+    const apiKeyCustomers = request.header('X-API-Key-customers'); // Lấy khóa của người dùng "customers"
 
-    if (!apiKey) {
+    // Kiểm tra cả hai loại khóa
+    if (!apiKey && !apiKeyCustomers) {
       response.status(401).send({
         error: 'Không thể xác thực.',
       });
     } else {
-      userRepository.getUserByApiKey(apiKey, (error, result) => {
-        if (error) {
-          response.status(500).send({
-            error: error.message,
-          });
-        } else if (result.length === 0) {
-          response.status(401).send({
-            error: 'Không thể xác thực.',
-          });
-        } else {
-          const auth = result[0];
-          request.auth = auth;
+      // Xử lý kiểm tra và xác thực cho cả hai loại khóa ở đây
 
-          next();
-        }
-      });
+      if (apiKey) {
+        userRepository.getUserByApiKey(apiKey, (error, result) => {
+          if (error) {
+            response.status(500).send({
+              error: error.message,
+            });
+          } else if (result.length === 0) {
+            response.status(401).send({
+              error: 'Không thể xác thực.',
+            });
+          } else {
+            const auth = result[0];
+            request.auth = auth;
+            next();
+          }
+        });
+      }
+
+      if (apiKeyCustomers) {
+        userRepository.getUserByApiKeyCustomers(
+          apiKeyCustomers,
+          (error, result) => {
+            if (error) {
+              response.status(500).send({
+                error: error.message,
+              });
+            } else if (result.length === 0) {
+              response.status(401).send({
+                error: 'Không thể xác thực.',
+              });
+            } else {
+              const auth = result[0];
+              request.auth = auth;
+              next();
+            }
+          },
+        );
+      }
     }
   }
 }

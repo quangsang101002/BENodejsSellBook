@@ -28,6 +28,17 @@ const getAuth = (request, response) => {
     }
   });
 };
+const getAuthCustomer = (request, response) => {
+  authServices.getAuthCustomer(request.auth.id, (error, result) => {
+    if (error) {
+      response.status(401).send({
+        error: error,
+      });
+    } else {
+      response.send(result);
+    }
+  });
+};
 const logout = (request, response) => {
   authServices.logout(request.auth.id, (error, result) => {
     if (error) {
@@ -56,6 +67,7 @@ export default {
   register,
   logout,
   getAuth,
+  getAuthCustomer,
 };
 // const addProduct = (requestBody, callback) => {
 //   let avatarImages = [];

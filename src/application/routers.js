@@ -13,6 +13,7 @@ router.use(authMiddleware);
 router.post('/login', authController.login);
 router.post('/logout', authController.logout);
 router.get('/auth', authController.getAuth);
+router.get('/auth/customers', authController.getAuthCustomer);
 router.post('/register', upload.single('register'), authController.register);
 // User management
 router.get('/users', userController.searchUsers);
