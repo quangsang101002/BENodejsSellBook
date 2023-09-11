@@ -48,9 +48,11 @@ const searchOrder = (params, callback) => {
 };
 
 const addOrder = (bodyOrder, callback) => {
+  console.log('bodyOrder-----', bodyOrder);
   const connection = getConnection();
   const productToCreate = {
     ...bodyOrder,
+    serial_number: new Date().getTime(),
     created_at: currentTime.format('YYYY-MM-DD HH:mm:ss'),
     updated_at: currentTime.format('YYYY-MM-DD HH:mm:ss'),
     order_at: currentTime.format('YYYY-MM-DD HH:mm:ss'),
@@ -64,7 +66,9 @@ const addOrder = (bodyOrder, callback) => {
       callback(null, result);
     }
   });
+  connection.end();
 };
+
 const getDetailOrder = (req, res) => {};
 const deleteOrder = (id, callback) => {
   const connection = getConnection();
@@ -77,6 +81,7 @@ const deleteOrder = (id, callback) => {
       callback(null, result);
     }
   });
+  connection.end();
 };
 const updateOrder = (params, callback) => {
   const bodyStatus = params.bodyOrder.status;
@@ -97,6 +102,7 @@ const updateOrder = (params, callback) => {
       }
     },
   );
+  connection.end();
 };
 export default {
   addOrder,

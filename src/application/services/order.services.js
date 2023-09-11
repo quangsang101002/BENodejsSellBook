@@ -9,6 +9,7 @@ const searchOrder = (params, callback) => {
   });
 };
 const addOrder = (requestBody, callback) => {
+  console.log('requestBody', requestBody);
   let originalname = null;
   let path = null;
 
@@ -70,6 +71,7 @@ const addOrder = (requestBody, callback) => {
       total_price: requestBody.total_price,
       status: Number(requestBody.status),
       note: requestBody.note,
+      nameproduct: requestBody.nameproduct,
       created_by_id: requestBody.authId,
       updated_by_id: requestBody.authId,
     };
@@ -86,6 +88,7 @@ const addOrder = (requestBody, callback) => {
     });
   }
 };
+
 const getDetailOrder = (req, res) => {};
 const deleteOrder = (idOrder, callback) => {
   orderRepository.deleteOrder(idOrder, (error, result) => {

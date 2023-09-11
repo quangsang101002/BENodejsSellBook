@@ -95,6 +95,7 @@ const getDetailUser = (params, callback) => {
       callback(null, result);
     }
   });
+  connection.end();
 };
 
 const getUserbyUserNameAndRole = (username, role, callback) => {
@@ -178,7 +179,6 @@ const getUserByApiKeyCustomers = (apiKey, callback) => {
 };
 const createApiKey = (userId, apiKey, callback) => {
   const connection = getConnection();
-
   connection.query(
     'UPDATE users SET api_key = ? WHERE id = ?',
     [apiKey, userId],
@@ -223,6 +223,7 @@ const updateUser = (params, id, callback) => {
       callback(null, result);
     }
   });
+  connection.end();
 };
 
 const deleteUser = (params, callback) => {
@@ -235,6 +236,7 @@ const deleteUser = (params, callback) => {
       callback(null, result);
     }
   });
+  connection.end();
 };
 const register = async (newUser, callback) => {
   const connection = getConnection();
@@ -250,6 +252,7 @@ const register = async (newUser, callback) => {
           resolve(result);
         }
       });
+      connection.end();
     });
 
     // Check if the provided username or email already exists
@@ -282,6 +285,7 @@ const register = async (newUser, callback) => {
           callback(null, result);
         }
       });
+      connection.end();
     }
   } catch (error) {
     callback(error, null);
