@@ -56,14 +56,14 @@ const addOrder = (requestBody, callback) => {
   if (validateErrors.size !== 0) {
     callback(Object.fromEntries(validateErrors), null);
   } else {
-    let avatar = null;
-    if (requestBody.avatar) {
-      const avatarExtension = getFilleExtention(originalname);
-      avatar = `avatar/${requestBody.name}.${avatarExtension}`;
-      const avatarLocation = './public/' + avatar;
-      // Copy upload file to saving location
-      fs.cpSync(path, avatarLocation);
-    }
+    // let avatar = null;
+    // if (requestBody.avatar) {
+    //   const avatarExtension = getFilleExtention(originalname);
+    //   avatar = `avatar/${requestBody.name}.${avatarExtension}`;
+    //   const avatarLocation = './public/' + avatar;
+    //   // Copy upload file to saving location
+    //   fs.cpSync(path, avatarLocation);
+    // }
 
     const newUser = {
       serial_number: requestBody.serial_number,
@@ -72,6 +72,7 @@ const addOrder = (requestBody, callback) => {
       status: Number(requestBody.status),
       note: requestBody.note,
       nameproduct: requestBody.nameproduct,
+      avatar: requestBody.avatar,
       created_by_id: requestBody.authId,
       updated_by_id: requestBody.authId,
     };

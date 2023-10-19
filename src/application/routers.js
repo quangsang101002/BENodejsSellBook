@@ -34,7 +34,7 @@ router.post(
 router.get('/product/:id', productController.getDetailProduct);
 router.put(
   '/product/:id',
-  upload.single('images'),
+  upload.fields([{ name: 'avatar' }, { name: 'gallery' }]),
   productController.updateProduct,
 );
 router.delete('/product/:id', productController.deleteProduct);

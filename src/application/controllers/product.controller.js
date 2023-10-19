@@ -15,6 +15,7 @@ const searchProduct = (req, res) => {
   });
 };
 const addProduct = (req, res) => {
+  console.log('>>>>>>>>--------------------------------------', req.body);
   const bodyUsers = req.body;
   const avatar = req.files['avatar'];
   const gallery = req.files['gallery'];
@@ -67,17 +68,33 @@ const deleteProduct = (req, res) => {
   });
 };
 const updateProduct = (req, res) => {
-  const productId = req.params;
-  const productBody = req.body;
+  const bodyUsers = req.body;
+  const avatar = req.files['avatar'];
+  const gallery = req.files['gallery'];
+  const id = req.params.id;
+
+  let responseSent = false; // Cờ kiểm tra đã gửi phản hồi chưa
+
   productServices.updateProduct(
-    { ...productBody, productId, authId: req.auth.id },
+    {
+      ...bodyUsers,
+      authId: req.auth.id,
+      avatar: avatar,
+      gallery: gallery,
+      id: id,
+    },
     (error, result) => {
+      if (responseSent) {
+        return; // Đã gửi phản hồi, không thực hiện gì thêm
+      }
+
+      responseSent = true; // Đánh dấu là đã gửi phản hồi
       if (error) {
         res.status(500).send({
           error: error,
         });
       } else {
-        res.status(204).send();
+        res.status(201).send();
       }
     },
   );

@@ -14,7 +14,6 @@ const searchProduct = (params, callback) => {
     sql += ' WHERE name LIKE ?';
     bindParams.push(name);
   }
-
   connection.query(
     'SELECT COUNT(1) AS totalProduct' + sql,
     bindParams,
@@ -73,6 +72,7 @@ const addProduct = (product, callback) => {
     }
   });
 };
+
 const getDetailProduct = (params, callback) => {
   const connection = getConnection();
   const sqlDetail = 'SELECT * FROM products WHERE product_id = ?';
@@ -86,9 +86,9 @@ const getDetailProduct = (params, callback) => {
 };
 const deleteProduct = (params, callback) => {
   const connection = getConnection();
-  const idProduct = params.id;
-  const sqlDelete = 'DELETE FROM products WHERE product_id = ?';
-  connection.query(sqlDelete, [idProduct], (error, result) => {
+  const productIds = params.id.split(',').map(Number); // Chuyển chuỗi danh sách product_id thành mảng số nguyên
+  const sqlDelete = 'DELETE FROM products WHERE product_id IN (?)';
+  connection.query(sqlDelete, [productIds], (error, result) => {
     if (error) {
       callback(error, null);
     } else {
@@ -98,16 +98,28 @@ const deleteProduct = (params, callback) => {
 };
 
 const updateProduct = (params, callback) => {
-  const { sku, name, category, description, unit_price } = params;
-  const id = params.productId.id;
+  const { sku, name, category, description, unit_price, image, id } = params;
+  console.log('image', image);
+  console.log('id', id);
   const idUpdate = params.authId;
   const connection = getConnection();
   const timeUpdate = currentTime.format('YYYY-MM-DD HH:mm:ss');
   const sqlUpdate =
-    'UPDATE products SET sku = ?, name = ?, category = ?, description = ?, unit_price = ?, updated_at= ?, updated_by_id = ? WHERE product_id = ?';
+    'UPDATE products SET sku = ?, name = ?, category = ?, description = ?, unit_price = ?, image = ?,updated_at= ?, updated_by_id = ? WHERE product_id = ?';
+
   connection.query(
     sqlUpdate,
-    [sku, name, category, description, unit_price, timeUpdate, idUpdate, id],
+    [
+      sku,
+      name,
+      category,
+      description,
+      unit_price,
+      image,
+      timeUpdate,
+      idUpdate,
+      id,
+    ],
     (error, result) => {
       if (error) {
         callback(error, null);

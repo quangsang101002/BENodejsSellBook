@@ -252,7 +252,6 @@ const register = async (newUser, callback) => {
           resolve(result);
         }
       });
-      connection.end();
     });
 
     // Check if the provided username or email already exists
