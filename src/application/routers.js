@@ -24,7 +24,6 @@ router.put('/users/:id', upload.single('avatar'), userController.updateUser);
 router.delete('/users/:id', userController.deleteUser);
 
 // Product management
-
 router.get('/product', productController.searchProduct);
 router.post(
   '/product',

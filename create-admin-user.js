@@ -4,7 +4,7 @@ import { encryptPassWord } from './src/utilities/hash.util.js';
 const connection = getConnection();
 
 const adminUser = {
-  username: 'sangquang10',
+  username: 'sang123',
   email: 'quangsang123@gmail.com',
   password: encryptPassWord('password123'),
   role: 1,

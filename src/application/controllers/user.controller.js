@@ -15,6 +15,7 @@ const searchUsers = (req, res) => {
 };
 
 const addUsers = (req, res) => {
+  console.log('------------------------------', req.auth);
   if (req.auth.role !== 1) {
     res.status(403).send({
       error: 'Không có quyền truy cập',

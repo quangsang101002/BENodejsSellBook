@@ -14,6 +14,7 @@ const searchProduct = (req, res) => {
     }
   });
 };
+
 const addProduct = (req, res) => {
   console.log('>>>>>>>>--------------------------------------', req.body);
   const bodyUsers = req.body;
